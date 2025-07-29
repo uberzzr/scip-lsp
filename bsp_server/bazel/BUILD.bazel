@@ -1,0 +1,22 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+load("@scip_lsp_pip_deps//:requirements.bzl", "requirement")
+
+py_library(
+    name = "bazel_cmd",
+    srcs = glob(["*.py"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        requirement("tqdm"),
+        "//bsp_server/util:utils",
+    ],
+)
+
+py_test(
+    name = "test_execute_query",
+    srcs = ["test/test_execute_query.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":bazel_cmd",
+        "//bsp_server/util:utils",
+    ],
+)

@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["utils.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/java-utils",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = ["@dev_lsp_go_protocol//:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["utils_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)

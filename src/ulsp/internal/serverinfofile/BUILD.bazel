@@ -1,0 +1,52 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["server_info_file.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/serverinfofile",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["server_info_file_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//idl/mock:go_config_gomock_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_fx//fxtest:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "serverinfofilemock",
+    out = "serverinfofile_mock_for_test.go",
+    interfaces = [
+        "ServerInfoFile",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "serverinfofilemock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/internal/serverinfofile",
+)
+
+go_library(
+    name = "go_serverinfofile_gomock_library",
+    srcs = [":serverinfofilemock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/serverinfofile/serverinfofilemock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

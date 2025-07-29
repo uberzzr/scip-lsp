@@ -1,0 +1,23 @@
+logging:
+  level: debug
+  development: true
+  encoding: console
+  outputPaths:
+    - stdout
+    - "${HOME}/.devpod/logs/ulsp/ulsp-daemon.log"
+
+monorepos:
+  _default:
+    scip:
+      loadFromDirectories: true
+      directories:
+        - '.scip'
+
+ulspPlugins:
+  doc-sync: true
+  quick-actions: true
+  scip: true
+  user-guidance: true
+  indexer: true
+  scala-assist: false
+  jdk: true

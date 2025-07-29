@@ -1,0 +1,27 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+
+java_library(
+    name = "aggregator",
+    srcs = glob(["*.java"]),
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        "@maven//:org_slf4j_slf4j_simple",
+    ],
+    deps = [
+        "//src/main/java/com/uber/scip/aggregator/scip",
+        "@maven//:com_sourcegraph_scip_semanticdb",
+        "@maven//:commons_cli_commons_cli",
+        "@maven//:commons_io_commons_io",
+        "@maven//:org_jspecify_jspecify",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+java_binary(
+    name = "aggregator_bin",
+    main_class = "com.uber.scip.aggregator.Aggregator",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        ":aggregator",
+    ],
+)

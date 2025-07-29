@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package uber.devexp.ide.ulspdaemon.model;
+
+option go_package = "modelpb";
+option java_multiple_files = true;
+option java_outer_classname = "TypesProto";
+option java_package = "com.uber.devexp.ide.ulspdaemon.model";
+
+message PackageError {
+    string pos = 1;
+    string msg = 2;
+    int32 kind = 3;
+}
+
+message Sizes {
+    int32 word_size = 1 [json_name = "WordSize"];
+    int32 max_align = 2 [json_name = "MaxAlign"];
+}
+
+message GoPackage {
+    string id = 1  [json_name = "ID"];
+    string name = 2 [json_name = "Name"];
+    string pkg_path = 3 [json_name = "PkgPath"];
+    bool standard = 9 [json_name = "Standard"];
+    string export_file = 7 [json_name = "ExportFile"];
+    repeated string go_files = 4 [json_name = "GoFiles"];
+    repeated string compiled_go_files = 5 [json_name = "CompiledGoFiles"];
+    repeated string other_files = 6 [json_name = "OtherFiles"];
+    map<string, string> imports = 8 [json_name = "Imports"];
+    repeated PackageError errors = 12 [json_name = "Errors"];
+    repeated string ignored_files = 13 [json_name = "IgnoredFiles"];
+}
+
+message SourceBreakpoint {
+    uint32 line = 1;
+    uint32 column = 2;
+}
+
+message JavaBreakpointLocation {
+    uint32 line = 1;
+    uint32 column = 2;
+    string class_name = 3;
+    string method_name = 4;
+    string method_signature = 5;
+}

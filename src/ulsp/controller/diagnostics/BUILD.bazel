@@ -1,0 +1,75 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["diagnostics.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/diagnostics",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["diagnostics_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "diagnosticsmock",
+    out = "diagnostics_mock_for_test.go",
+    interfaces = [
+        "Controller",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "diagnosticsmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/diagnostics/diagnosticsmock",
+)
+
+go_library(
+    name = "go_diagnostics_gomock_library",
+    srcs = [":diagnosticsmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/diagnostics/diagnosticsmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

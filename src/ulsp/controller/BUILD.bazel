@@ -1,0 +1,20 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["module.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/controller/diagnostics:go_default_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/controller/indexer:go_default_library",
+        "//src/ulsp/controller/jdk:go_default_library",
+        "//src/ulsp/controller/quick-actions:go_default_library",
+        "//src/ulsp/controller/scala-assist:go_default_library",
+        "//src/ulsp/controller/scip:go_default_library",
+        "//src/ulsp/controller/ulsp-daemon:go_default_library",
+        "//src/ulsp/controller/user-guidance:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+    ],
+)

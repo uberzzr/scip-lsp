@@ -1,0 +1,17 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "factory.go",
+        "lsp.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/factory",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)

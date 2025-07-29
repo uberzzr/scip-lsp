@@ -1,0 +1,36 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "module.go",
+        "server_info.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/handler",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "//idl/ulsp/service:servicepb_go_proto",
+        "//src/ulsp/controller:go_default_library",
+        "//src/ulsp/controller/ulsp-daemon:go_default_library",
+        "//src/ulsp/handler/ulsp-daemon:go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "module_test.go",
+        "server_info_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//idl/ulsp/service:servicepb_go_proto",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_goleak//:go_default_library",
+    ],
+)

@@ -1,0 +1,44 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["fs.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/fs",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = ["@org_uber_go_fx//:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["fs_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+    ],
+)
+
+gomock(
+    name = "fsmock",
+    out = "fs_mock_for_test.go",
+    interfaces = [
+        "UlspFS",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "fsmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/internal/fs",
+)
+
+go_library(
+    name = "go_fs_gomock_library",
+    srcs = [":fsmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/fs/fsmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

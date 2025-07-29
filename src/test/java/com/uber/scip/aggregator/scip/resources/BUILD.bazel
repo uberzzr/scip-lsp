@@ -1,0 +1,5 @@
+filegroup(
+    name = "resources",
+    srcs = ["App.java.semanticdb"],
+    visibility = ["//visibility:public"],
+)

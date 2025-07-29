@@ -1,0 +1,84 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["json_rpc.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/jsonrpcfx",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "json_rpc_test.go",
+        ":jsonrpcfx_local_gomock",  # keep
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//idl/mock:go_config_gomock_library",
+        "//idl/mock:go_jsonrpc2_gomock_library",
+        "//src/ulsp/internal/serverinfofile:go_serverinfofile_gomock_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//fxtest:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "jsonrpcfx_local_gomock",
+    out = "jsonrpcfxmock.go",
+    interfaces = [
+        "JSONRPCModule",
+        "Router",
+        "ConnectionManager",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "jsonrpcfx",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/internal/jsonrpcfx",
+    source = "json_rpc.go",
+)
+
+gomock(
+    name = "jsonrpcfxmock",
+    out = "jsonrpcfx_mock_for_test.go",
+    interfaces = [
+        "JSONRPCModule",
+        "Router",
+        "ConnectionManager",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "jsonrpcfxmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/internal/jsonrpcfx/jsonrpcfxmock",
+)
+
+go_library(
+    name = "go_jsonrpcfx_gomock_library",
+    srcs = [":jsonrpcfxmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/jsonrpcfx/jsonrpcfxmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

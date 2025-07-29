@@ -1,0 +1,58 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "index.go",
+        "prefixtree.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/scip-lib/partialloader",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/scip-lib/mapper:go_default_library",
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/scanner:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+    ],
+)
+
+gomock(
+    name = "partial_loader_mock",
+    out = "partial_loader_mock_for_test.go",
+    interfaces = [
+        "PartialIndex",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "loader",
+    self_package = "github.com/uber/scip-lsp/src/scip-lib/partialloader",
+)
+
+go_library(
+    name = "go_loader_gomock_library",
+    srcs = [":partial_loader_mock"],
+    importpath = "github.com/uber/scip-lsp/src/scip-lib/partialloader/partial_loader_mock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "@//src/scip-lib/model:go_default_library",
+        "@//src/scip-lib/scanner:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "index_test.go",
+        "prefixtree_test.go",
+    ],
+    data = ["//src/scip-lib:testdata"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+    ],
+)

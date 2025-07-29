@@ -1,0 +1,89 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "doc_sync.go",
+        "position_mapper.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/doc-sync",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/errors:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/protocol:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_sergi_go_diff//diffmatchpatch:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "doc_sync_test.go",
+        "position_mapper_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/internal/fs:go_fs_gomock_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "docsyncmock",
+    out = "docsync_mock_for_test.go",
+    interfaces = [
+        "Controller",
+        "PositionMapper",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "docsyncmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/doc-sync/docsyncmock",
+)
+
+go_library(
+    name = "go_docsync_gomock_library",
+    srcs = [":docsyncmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/doc-sync/docsyncmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/errors:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/protocol:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_sergi_go_diff//diffmatchpatch:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

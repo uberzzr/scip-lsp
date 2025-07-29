@@ -1,0 +1,96 @@
+name: Bug Report
+description: File a bug report to help us improve
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: What environment are you running in?
+      placeholder: |
+        - OS: [e.g. Ubuntu 22.04, macOS 14.0, Windows 11]
+        - Java version: [e.g. OpenJDK 11, Oracle JDK 17]
+        - Bazel version: [e.g. 7.0.0]
+        - IDE: [e.g. VS Code 1.85.0, Cursor 0.29.0, IntelliJ IDEA 2023.3]
+        - scip-lsp version/commit: [e.g. latest main, commit abc123]
+    validations:
+      required: true
+
+  - type: textarea
+    id: lsp-logs
+    attributes:
+      label: Language Server Logs
+      description: |
+        Please include LSP logs from one or more of these locations:
+        - IDE Output panel: Go to Output -> "LSP Server Initialization" (the extension may have auto-started the LSP)
+        - Log files in /tmp/ulsp-.../log.txt
+        - Terminal output if you manually ran `bazel run //src/ulsp:ulsp-daemon`
+      render: shell
+
+  - type: textarea
+    id: scip-generation-logs
+    attributes:
+      label: SCIP Generation Logs
+      description: Please include logs from SCIP index generation (from running the scip_sync script or generate_scip_index.sh)
+      render: shell
+
+  - type: textarea
+    id: scip-index-info
+    attributes:
+      label: SCIP Index Information
+      description: |
+        If relevant, please provide information about the generated SCIP indices:
+        - Size of .scip directory
+        - List of .scip files generated (ls -la .scip/)
+        - Any error files or incomplete indices
+      render: shell
+
+  - type: textarea
+    id: sample-project
+    attributes:
+      label: Reproducible Sample
+      description: |
+        If your project is open source, please provide a link to a minimal reproducible example or the specific repository/commit where the issue occurs.
+        If not open source, consider creating a minimal example that reproduces the issue.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here, such as specific Java files that aren't working, build configurations, etc.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our contribution guidelines.
+      options:
+        - label: I agree to follow this project's contribution guidelines
+          required: true

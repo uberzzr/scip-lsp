@@ -1,0 +1,64 @@
+service:
+  name: ulsp-daemon
+
+# See https://engdocs.uberinternal.com/api/go/pkg/code.uber.internal/go/tracebackfx.git/ for more inforamtion.
+traceback:
+  level: system
+
+tracing:
+  disabled: true
+  payloadCapture:
+    disabled: true
+    disableEmployeeSampler: true
+
+# See http://t.uber.com/yarpc for configuring transports, middleware, fault-tolerance, UNS/UDG, logging and more
+yarpc:
+  inbounds:
+    http:
+      address: ":${ULSP_PORT_HTTP:27891}"
+    grpc:
+      address: ":${ULSP_PORT_GRPC:27892}"
+
+glue:
+  recover:
+    stacktrace: true
+
+metrics:
+  disabled: false
+  reporter: prometheus
+
+logging:
+  level: info
+  development: false
+  encoding: json
+  outputPaths:
+    - stdout
+
+jsonrpc:
+  address: ":${ULSP_PORT_JSONRPC:27893}"
+
+idleTimeoutMinutes: 480 # 8 hours
+maxFileSizeBytes: 3145728 # 3MB
+serverInfoFilePath: "${HOME}/.ulspd"
+
+monorepos:
+  _default:
+    scip:
+      loadFromDirectories: true
+      directories:
+        - '.scip'
+
+ulspPlugins:
+  doc-sync: true
+  quick-actions: true
+  scip: true
+  user-guidance: true
+  indexer: true
+  scala-assist: false
+  jdk: true
+
+guidance:
+  messages:
+    # Messages here will be shown after initialization.
+    # To create or delete a message, add or remove a key-value pair.
+    # To modify an existing message without re-showing to users that have already seen it, just modify the value.

@@ -1,0 +1,61 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_test(
+    name = "go_default_test",
+    srcs = ["session_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/internal/errors:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@org_uber_go_goleak//:go_default_library",
+    ],
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = ["session.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/repository/session",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/internal/errors:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/model:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "repositorymock",
+    out = "repository_mock_for_test.go",
+    interfaces = [
+        "Repository",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "repositorymock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/repository/session",
+)
+
+go_library(
+    name = "go_repository_gomock_library",
+    srcs = [":repositorymock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/repository/session/repositorymock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/internal/errors:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/model:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

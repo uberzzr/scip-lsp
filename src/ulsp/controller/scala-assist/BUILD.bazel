@@ -1,0 +1,35 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["scala_assist.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/scala-assist",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_fsnotify_fsnotify//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["scala_assist_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_fsnotify_fsnotify//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

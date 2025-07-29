@@ -1,0 +1,30 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["jdk.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/handler/jdk",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//idl/ulsp/service:servicepb_go_proto",
+        "//src/ulsp/controller/jdk:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@org_uber_go_yarpc//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["jdk_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//idl/ulsp/model:modelpb_go_proto",
+        "//idl/ulsp/service:servicepb_go_proto",
+        "//src/ulsp/controller/jdk:go_jdk_gomock_library",
+        "//src/ulsp/controller/jdk/types:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

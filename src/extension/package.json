@@ -1,0 +1,175 @@
+{
+  "name": "scip-lsp-extension",
+  "displayName": "SCIP LSP Extension",
+  "description": "SCIP based language server with support for Bazel",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "uber.lsp.restart",
+        "title": "Restart Uber Language Server",
+        "category": "Uber LSP"
+      },
+      {
+        "command": "uber.lsp.showCustomOutputChannel",
+        "title": "Show Uber LSP Custom Output Channel",
+        "category": "Uber LSP"
+      }
+    ],
+    "configuration": {
+      "title": "Uber Language Server",
+      "properties": {
+        "uber.uberLanguageServer.enablementStatus": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Auto",
+            "Disabled"
+          ],
+          "default": "Auto",
+          "description": "Enable or disable the Uber Language Server."
+        },
+        "uber.uberLanguageServer.serverBinaryPath": {
+          "type": "string",
+          "default": "/usr/local/bin/scip-lsp",
+          "description": "Path to the Uber Language Server binary."
+        },
+        "uber.uberLanguageServer.serverConfigDirectory": {
+          "type": "string",
+          "default": "/usr/local/bin/scip-lsp/config",
+          "description": "Path to the Uber Language Server config directory."
+        },
+        "uber.uberLanguageServer.serverInfoFile": {
+          "type": "string",
+          "default": "~/.ulspd",
+          "description": "Path to the Uber Language Server info file."
+        },
+        "uber.uberLanguageServer.serverDevelopmentMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable development mode for the Uber Language Server."
+        },
+        "uber.uberLanguageServer.languageClientOptions": {
+          "type": "object",
+          "properties": {
+            "documentSelector": {
+              "type": "array",
+              "description": "Document selectors for the language client.",
+              "examples": [
+                [
+                  {
+                    "scheme": "file",
+                    "language": "go"
+                  }
+                ]
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scheme": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "pattern": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "fileWatcherPatterns": {
+              "examples": [
+                "**/*.go"
+              ],
+              "type": "array",
+              "description": "The patterns which will be watched for changes in the workspace.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "documentSelector": [
+              {
+                "scheme": "file",
+                "language": "go"
+              },
+              {
+                "scheme": "file",
+                "language": "java"
+              },
+              {
+                "scheme": "file",
+                "language": "scala"
+              },
+              {
+                "scheme": "file",
+                "language": "starlark"
+              },
+              {
+                "scheme": "file",
+                "language": "bazelproject"
+              },
+              {
+                "scheme": "file",
+                "language": "templ"
+              }
+            ],
+            "fileWatcherPatterns": [
+              "**/*.java",
+              "**/*.go"
+            ]
+          },
+          "description": "Advanced options for the language client (documentSelector, fileWatcherPatterns, etc)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npx webpack",
+    "watch": "npx webpack --watch",
+    "package": "npx webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/proper-lockfile": "^4.1.4",
+    "@types/semver": "^7.7.0",
+    "@types/tail": "^2.2.3",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "proper-lockfile": "^4.1.2",
+    "semver": "^7.7.2",
+    "tail": "^2.2.6",
+    "vscode-languageclient": "^9.0.1",
+    "yaml": "^2.8.0"
+  }
+}

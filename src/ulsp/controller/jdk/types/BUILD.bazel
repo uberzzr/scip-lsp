@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["types.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/jdk/types",
+    visibility = ["//visibility:public"],
+    deps = ["@dev_lsp_go_protocol//:go_default_library"],
+)

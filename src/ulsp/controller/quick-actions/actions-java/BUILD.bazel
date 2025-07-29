@@ -1,0 +1,47 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "action_java_build.go",
+        "action_java_sync.go",
+        "action_java_test_coverage.go",
+        "action_java_test_explorer.go",
+        "action_java_test_explorer_info.go",
+        "action_java_test_run.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/quick-actions/actions-java",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/controller/quick-actions/action:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/internal/java-utils:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "action_java_build_test.go",
+        "action_java_sync_test.go",
+        "action_java_test_coverage_test.go",
+        "action_java_test_explorer_info_test.go",
+        "action_java_test_explorer_test.go",
+        "action_java_test_run_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/controller/quick-actions/action:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/internal/executor:go_loader_gomock_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

@@ -1,0 +1,41 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["ulsp_daemon.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/entity",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_zap//zapcore:go_default_library",  #keep
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["ulsp_daemon_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@org_uber_go_goleak//:go_default_library",
+    ],
+)
+
+#zapper(
+#    name = "zapper",
+#    srcs = ["ulsp_daemon.go"],
+#    importpath = "github.com/uber/scip-lsp/src/ulsp/entity",
+#    types = [
+#        "UlspDaemon",
+#        "Session",
+#    ],
+#    visibility = ["//src/ulsp:__subpackages__"],
+#    deps = [
+#        "@com_github_gofrs_uuid//:go_default_library",
+#        "@dev_lsp_go_jsonrpc2//:go_default_library",
+#        "@dev_lsp_go_protocol//:go_default_library",
+#        "@org_uber_go_zap//zapcore:go_default_library",
+#    ],
+#)

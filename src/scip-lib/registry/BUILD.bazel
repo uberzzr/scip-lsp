@@ -1,0 +1,39 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "partial_registry.go",
+        "types.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/scip-lib/registry",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/scip-lib/mapper:go_default_library",
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/partialloader:go_default_library",
+        "//src/scip-lib/utils:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["partial_registry_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/partialloader:go_loader_gomock_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+        "@org_uber_go_zap//zaptest:go_default_library",
+    ],
+)

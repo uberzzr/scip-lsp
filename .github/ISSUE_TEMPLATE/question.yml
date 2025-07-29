@@ -1,0 +1,53 @@
+name: Question
+description: Ask a question about the project
+title: "[Question]: "
+labels: ["question", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your question! Please check the README and existing issues first.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What's your question?
+      description: Please be as specific as possible.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      options:
+        - Setup and Installation
+        - Usage and Configuration
+        - IDE Integration
+        - SCIP Index Generation
+        - Language Server Features
+        - Build System (Bazel)
+        - Contributing
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: |
+        Please provide any relevant context:
+        - What you're trying to achieve
+        - What you've already tried
+        - Your environment (OS, IDE, Java version, etc.)
+        - Links to relevant documentation you've checked
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our contribution guidelines.
+      options:
+        - label: I agree to follow this project's contribution guidelines
+          required: true

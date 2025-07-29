@@ -1,0 +1,56 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "methods_code_intel.go",
+        "methods_document.go",
+        "methods_lifecycle.go",
+        "methods_window.go",
+        "methods_workspace.go",
+        "router.go",
+        "ulsp_daemon.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/handler/ulsp-daemon",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "//idl/ulsp/service:servicepb_go_proto",
+        "//src/ulsp/controller/ulsp-daemon:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/internal/jsonrpcfx:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "methods_code_intel_test.go",
+        "methods_document_test.go",
+        "methods_lifecycle_test.go",
+        "methods_window_test.go",
+        "methods_workspace_test.go",
+        "router_test.go",
+        "ulsp_daemon_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//idl/mock:go_jsonrpc2_gomock_library",
+        "//idl/ulsp/service:servicepb_go_proto",
+        "//src/ulsp/controller/ulsp-daemon:go_ulspdaemon_gomock_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/internal/jsonrpcfx:go_jsonrpcfx_gomock_library",
+        "//src/ulsp/mapper:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_goleak//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

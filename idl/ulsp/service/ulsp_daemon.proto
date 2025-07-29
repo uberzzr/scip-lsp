@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package uber.devexp.ide.ulspdaemon.service;
+
+option go_package = "servicepb";
+option java_multiple_files = true;
+option java_outer_classname = "UlspDaemonProto";
+option java_package = "com.uber.devexp.ide.ulspdaemon.service";
+
+import "ulsp/model/types.proto";
+
+message GetGoPackagesRequest {
+    int32 mode = 1;
+    bool tests = 2;
+    map<string, bytes> overlay = 3;
+}
+
+message GetGoPackagesResponse {
+    bool not_handled = 1 [json_name = "NotHandled"];
+    string compiler = 2 [json_name = "Compiler"];
+    string arch = 3 [json_name = "Arch"];
+    uber.devexp.ide.ulspdaemon.model.Sizes sizes = 4 [json_name = "Sizes"];
+    repeated string roots = 5 [json_name = "Roots"];
+    repeated uber.devexp.ide.ulspdaemon.model.GoPackage packages = 6 [json_name = "Packages"];
+}
+
+message ResolveClassToPathRequest {
+    string fully_qualified_name = 1;
+    string source_relative_path = 2;
+}
+
+message ResolveClassToPathResponse {
+    string source_uri = 1;
+}
+
+message ResolveBreakpointsRequest {
+    string source_uri = 1;
+    repeated uber.devexp.ide.ulspdaemon.model.SourceBreakpoint breakpoints = 2;
+}
+
+message ResolveBreakpointsResponse {
+    repeated uber.devexp.ide.ulspdaemon.model.JavaBreakpointLocation breakpoint_locations = 1;
+}
+
+message SampleRequest {
+    string name = 1;
+}
+
+message SampleResponse {
+    string name = 1;
+}
+
+message BadRequest {
+    string msg = 1;
+}
+
+message NotFound {
+    string uuid = 1;
+}
+
+message UlspDaemonErrorDetails {
+    oneof type {
+        BadRequest bad_request = 1;
+        NotFound not_found = 2;
+    }
+}
+
+service UlspDaemon {
+    // Sample Request
+    rpc Sample(SampleRequest) returns (SampleResponse) {}
+}
+
+service GoPackagesDriver {
+    // Returns a GoPackages response for go tooling
+    rpc GetGoPackages(GetGoPackagesRequest) returns (GetGoPackagesResponse) {}
+}
+
+service JDK {
+    // Maps a JDK class to a file path
+    rpc ResolveClassToPath(ResolveClassToPathRequest) returns (ResolveClassToPathResponse) {}
+
+    // Resolves breakpoints in a source file to breakpoint locations
+    rpc ResolveBreakpoints(ResolveBreakpointsRequest) returns (ResolveBreakpointsResponse) {}
+}

@@ -1,0 +1,46 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "app.go",
+        "decorators.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/app",
+    visibility = ["//src/ulsp:__subpackages__"],
+    deps = [
+        "//src/ulsp/gateway:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/handler:go_default_library",
+        "//src/ulsp/internal/core:go_default_library",
+        "//src/ulsp/internal/executor:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/jsonrpcfx:go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "//src/ulsp/internal/workspace-utils:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["decorators_test.go"],
+    data = ["//src/ulsp/app/testdata/config"],
+    embed = [":go_default_library"],
+    env = {"UBER_CONFIG_DIR": "testdata/config"},
+    deps = [
+        "//src/ulsp/internal/executor:go_default_library",
+        "//src/ulsp/internal/executor:go_loader_gomock_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/fs:go_fs_gomock_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_fx//fxtest:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

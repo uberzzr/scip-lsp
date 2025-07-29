@@ -1,0 +1,21 @@
+load("@contrib_rules_jvm//docs:stardoc-input.bzl", "java_test_suite")
+
+java_test_suite(
+    name = "extractor_test",
+    srcs = glob(["*.java"]),
+    data = ["//src/test/java/com/uber/scip/extractor/resources"],
+    runner = "junit5",
+    deps = [
+        "//src/main/java/com/uber/scip/extractor",
+        "//src/test/java/com/uber/utils:test_utils",
+        "@maven//:com_sourcegraph_scip_semanticdb",
+        "@maven//:commons_cli_commons_cli",
+        "@maven_test//:org_assertj_assertj_core",
+        "@maven_test//:org_junit_jupiter_junit_jupiter_api",
+        "@maven_test//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven_test//:org_junit_platform_junit_platform_launcher",
+        "@maven_test//:org_junit_platform_junit_platform_reporting",
+        "@maven_test//:org_mockito_mockito_core",
+        "@maven_test//:org_mockito_mockito_inline",
+    ],
+)

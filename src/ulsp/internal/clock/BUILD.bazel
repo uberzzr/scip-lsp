@@ -1,0 +1,15 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["clock.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/internal/clock",
+    visibility = ["//src/ulsp:__subpackages__"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["clock_test.go"],
+    embed = [":go_default_library"],
+    deps = ["@com_github_stretchr_testify//assert:go_default_library"],
+)

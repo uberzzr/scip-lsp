@@ -1,0 +1,70 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library")
+
+gomock(
+    name = "config_gomock",
+    out = "configmock.go",
+    interfaces = [
+        "Provider",
+    ],
+    library = "@org_uber_go_config//:go_default_library",
+    package = "configmock",
+    self_package = "github.com/uber/scip-lsp/idl/mock/configmock",
+)
+
+go_library(
+    name = "go_config_gomock_library",
+    srcs = ["configmock.go"],
+    importpath = "github.com/uber/scip-lsp/idl/mock/configmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)
+
+gomock(
+    name = "jsonrpc2mock",
+    out = "jsonrpc2_mock_for_test.go",
+    interfaces = [
+        "Conn",
+    ],
+    library = "@dev_lsp_go_jsonrpc2//:go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "jsonrpc2mock",
+    self_package = "github.com/uber/scip-lsp/idl/mock/jsonrpc2mock",
+)
+
+go_library(
+    name = "go_jsonrpc2_gomock_library",
+    srcs = [":jsonrpc2mock"],
+    importpath = "github.com/uber/scip-lsp/idl/mock/jsonrpc2mock",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@dev_lsp_go_jsonrpc2//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)
+
+gomock(
+    name = "fxmock",
+    out = "fx_mock_for_test.go",
+    interfaces = [
+        "Shutdowner",
+    ],
+    library = "@org_uber_go_fx//:go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "fxmock",
+    self_package = "github.com/uber/scip-lsp/idl/mock/fxmock",
+)
+
+go_library(
+    name = "go_fx_gomock_library",
+    srcs = [":fxmock"],
+    importpath = "github.com/uber/scip-lsp/idl/mock/fxmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

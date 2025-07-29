@@ -1,0 +1,32 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "scip_lsp.go",
+        "scip_types.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/scip-lib/mapper",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "scip_lsp_test.go",
+        "scip_types_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+    ],
+)

@@ -1,0 +1,142 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "consume.go",
+        "partial_registry.go",
+        "scip.go",
+        "scip_notify.go",
+        "types.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/scip",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/scip-lib/mapper:go_default_library",
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/partialloader:go_default_library",
+        "//src/ulsp/controller/diagnostics:go_default_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/persistent-notifier:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_fsnotify_fsnotify//:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+# target for the testdata folder, it's just files that are needed for the tests
+filegroup(
+    name = "testdata",
+    srcs = glob(["testdata/**"]),
+    visibility = ["//src/ulsp/controller/scip:__subpackages__"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "consume_test.go",
+        "partial_registry_test.go",
+        "scip_notify_test.go",
+        "scip_test.go",
+        "types_test.go",
+        ":scip_gomock_internal",  #keep
+    ],
+    data = ["//src/ulsp/controller/scip:testdata"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/scip-lib/mapper:go_default_library",
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/partialloader:go_loader_gomock_library",
+        "//src/ulsp/controller/diagnostics:go_diagnostics_gomock_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/controller/doc-sync:go_docsync_gomock_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/internal/fs:go_fs_gomock_library",
+        "//src/ulsp/internal/persistent-notifier:go_default_library",
+        "//src/ulsp/internal/persistent-notifier:go_notifier_gomock_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_fsnotify_fsnotify//:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+        "@org_uber_go_zap//zaptest:go_default_library",
+        "@rules_go//go/tools/bazel:go_default_library",
+    ],
+)
+
+gomock(
+    name = "scip_gomock_internal",
+    out = "mocks_for_test.go",
+    interfaces = [
+        "Registry",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "scip",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/scip",
+    source = "types.go",
+)
+
+gomock(
+    name = "scipmock",
+    out = "scip_mock_for_test.go",
+    interfaces = [
+        "Registry",
+        "Controller",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "scipmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/scip/scipmock",
+)
+
+go_library(
+    name = "go_scip_gomock_library",
+    srcs = [":scipmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/scip/scipmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/scip-lib/mapper:go_default_library",
+        "//src/scip-lib/model:go_default_library",
+        "//src/scip-lib/partialloader:go_default_library",
+        "//src/ulsp/controller/diagnostics:go_default_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/persistent-notifier:go_default_library",
+        "//src/ulsp/mapper:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_fsnotify_fsnotify//:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

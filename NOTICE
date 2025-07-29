@@ -1,0 +1,140 @@
+# NOTICE - Third-Party Dependencies
+
+This project utilizes the following open-source software:
+
+*   **tqdm** (https://github.com/tqdm/tqdm)
+    *   Copyright (c) 2013-present Noam Yorav-Raphael, Google Inc., and contributors
+    *   Dual licensed under:
+        *   MIT License (https://opensource.org/licenses/MIT)
+        *   Mozilla Public License 2.0 (https://www.mozilla.org/en-US/MPL/2.0/)
+    *   Source code available at: https://github.com/tqdm/tqdm
+
+## MIT Licensed Dependencies
+
+*   **vscode-languageclient** (https://github.com/microsoft/vscode-languageserver-node)
+    *   Copyright (c) Microsoft Corporation
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **proper-lockfile** (https://github.com/IndigoUnited/node-proper-lockfile)
+    *   Copyright (c) IndigoUnited
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **semver** (https://github.com/npm/node-semver)
+    *   Copyright (c) npm, Inc. and Contributors
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **tail** (https://github.com/lucagrulla/node-tail)
+    *   Copyright (c) Luca Grulla
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **yaml** (https://github.com/eemeli/yaml)
+    *   Copyright (c) Eemeli Aro
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **TypeScript** (https://github.com/microsoft/TypeScript)
+    *   Copyright (c) Microsoft Corporation
+    *   Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+
+*   **webpack** (https://github.com/webpack/webpack)
+    *   Copyright (c) Tobias Koppers
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **eslint** (https://github.com/eslint/eslint)
+    *   Copyright (c) OpenJS Foundation and contributors
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+## BSD Licensed Dependencies
+
+*   **sourcegraph/scip** (https://github.com/sourcegraph/scip)
+    *   Copyright (c) Sourcegraph
+    *   Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+
+*   **go.uber.org/zap** (https://github.com/uber-go/zap)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.uber.org/fx** (https://github.com/uber-go/fx)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.uber.org/config** (https://github.com/uber-go/config)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.uber.org/yarpc** (https://github.com/uber-go/yarpc)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.uber.org/multierr** (https://github.com/uber-go/multierr)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **uber-go/tally** (https://github.com/uber-go/tally)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.uber.org/mock** (https://github.com/uber-go/mock)
+    *   Copyright (c) Uber Technologies, Inc.
+    *   Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+
+## Apache 2.0 Licensed Dependencies
+
+*   **google.golang.org/protobuf** (https://github.com/protocolbuffers/protobuf-go)
+    *   Copyright (c) Google LLC
+    *   BSD 3-Clause License (https://opensource.org/licenses/BSD-3-Clause)
+
+*   **github.com/bazelbuild/rules_go** (https://github.com/bazelbuild/rules_go)
+    *   Copyright (c) The Bazel Authors
+    *   Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+
+*   **go.lsp.dev/jsonrpc2** (https://github.com/go-language-server/jsonrpc2)
+    *   Copyright (c) go-language-server
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.lsp.dev/protocol** (https://github.com/go-language-server/protocol)
+    *   Copyright (c) go-language-server
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **go.lsp.dev/uri** (https://github.com/go-language-server/uri)
+    *   Copyright (c) go-language-server
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **github.com/fsnotify/fsnotify** (https://github.com/fsnotify/fsnotify)
+    *   Copyright (c) fsnotify Authors
+    *   BSD 3-Clause License (https://opensource.org/licenses/BSD-3-Clause)
+
+*   **github.com/gofrs/uuid** (https://github.com/gofrs/uuid)
+    *   Copyright (c) gofrs
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **github.com/sergi/go-diff** (https://github.com/sergi/go-diff)
+    *   Copyright (c) Sergi Mansilla
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **github.com/stretchr/testify** (https://github.com/stretchr/testify)
+    *   Copyright (c) Mat Ryer and Tyler Bunnell
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+*   **gopkg.in/yaml.v3** (https://github.com/go-yaml/yaml)
+    *   Copyright (c) Kirill Simonov
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+## BSD 3-Clause Licensed Dependencies
+
+*   **github.com/golang/protobuf** (https://github.com/golang/protobuf)
+    *   Copyright (c) The Go Authors
+    *   BSD 3-Clause License (https://opensource.org/licenses/BSD-3-Clause)
+
+## Other Notable Dependencies
+
+*   **Go Programming Language** (https://golang.org/)
+    *   Copyright (c) The Go Authors
+    *   BSD 3-Clause License (https://opensource.org/licenses/BSD-3-Clause)
+
+*   **Node.js** (https://nodejs.org/)
+    *   Copyright (c) Node.js contributors
+    *   MIT License (https://opensource.org/licenses/MIT)
+
+---
+
+This NOTICE file covers the major dependencies used in this project. For a complete list of all transitive dependencies and their licenses, please refer to the package.json, go.mod, go.sum, and requirements.txt files in this repository.

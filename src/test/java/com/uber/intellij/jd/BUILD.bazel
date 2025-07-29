@@ -1,0 +1,19 @@
+load("@contrib_rules_jvm//docs:stardoc-input.bzl", "java_test_suite")
+
+java_test_suite(
+    name = "decompiler_test",
+    srcs = glob(["*.java"]),
+    data = ["//src/test/java/com/uber/intellij/jd/resources"],
+    env = {
+        "JARBIN_PATH": "$(JAVABASE)/bin/jar",
+    },
+    runner = "junit5",
+    deps = [
+        "//src/main/java/com/uber/intellij/jd:decompiler",
+        "//src/test/java/com/uber/utils:test_utils",
+        "@maven_test//:org_junit_jupiter_junit_jupiter_api",
+        "@maven_test//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven_test//:org_junit_platform_junit_platform_launcher",
+        "@maven_test//:org_junit_platform_junit_platform_reporting",
+    ],
+)

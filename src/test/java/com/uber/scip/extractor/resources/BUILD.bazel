@@ -1,0 +1,8 @@
+filegroup(
+    name = "resources",
+    srcs = [
+        "jar_with_lombok.jar",
+        "jar_without_lombok.jar",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,70 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["jdk.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/jdk",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/controller/jdk/types:go_default_library",
+        "//src/ulsp/controller/scip:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["jdk_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/scip-lib/model:go_default_library",
+        "//src/ulsp/controller/jdk/types:go_default_library",
+        "//src/ulsp/controller/scip:go_default_library",
+        "//src/ulsp/controller/scip:go_scip_gomock_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/internal/fs:go_fs_gomock_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_sourcegraph_scip//bindings/go/scip:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@dev_lsp_go_uri//:go_default_library",
+        "@org_uber_go_config//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "jdk_gomock",
+    out = "jdkmock.go",
+    interfaces = ["Controller"],
+    library = ":go_default_library",
+    package = "jdkmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/jdk/jdkmock",
+)
+
+go_library(
+    name = "go_jdk_gomock_library",
+    srcs = ["jdkmock.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/jdk/jdkmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/controller/jdk/types:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

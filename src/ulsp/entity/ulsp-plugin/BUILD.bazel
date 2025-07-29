@@ -1,0 +1,51 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["ulsp_plugin.go"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/entity/ulsp-plugin",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/entity:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["ulsp_plugin_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "pluginmock",
+    out = "plugin_mock_for_test.go",
+    interfaces = [
+        "Plugin",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "pluginmock",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/entity/ulsp-plugin/pluginmock",
+)
+
+go_library(
+    name = "go_plugin_gomock_library",
+    srcs = [":pluginmock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/entity/ulsp-plugin/pluginmock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+    ],
+)

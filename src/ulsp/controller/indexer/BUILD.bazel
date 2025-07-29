@@ -1,0 +1,103 @@
+load("@bazel_gomock//rules:gomock.bzl", "gomock")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "indexer.go",
+        "java_indexer.go",
+        "pending_cmd_store.go",
+    ],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/indexer",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/controller/user-guidance:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/executor:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/java-utils:go_default_library",
+        "//src/ulsp/internal/logfilewriter:go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "indexer_test.go",
+        "java_indexer_test.go",
+        "pending_cmd_store_test.go",
+        ":indexer_mock",  #keep
+    ],
+    embed = [":go_default_library"],
+    deps = [
+        "//src/ulsp/controller/doc-sync:go_docsync_gomock_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_ideclient_gomock_library",
+        "//src/ulsp/internal/executor:go_loader_gomock_library",
+        "//src/ulsp/internal/fs:go_fs_gomock_library",
+        "//src/ulsp/internal/logfilewriter:go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_serverinfofile_gomock_library",
+        "//src/ulsp/repository/session:go_repository_gomock_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//require:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_fx//fxtest:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)
+
+gomock(
+    name = "indexer_mock",
+    out = "indexer_mock_for_test.go",
+    interfaces = [
+        "Indexer",
+    ],
+    library = ":go_default_library",
+    mockgen_tool = "@org_uber_go_mock//mockgen",
+    package = "indexer",
+    self_package = "github.com/uber/scip-lsp/src/ulsp/controller/indexer",
+    source = "indexer.go",
+)
+
+go_library(
+    name = "go_indexer_gomock_library",
+    srcs = [":indexer_mock"],
+    importpath = "github.com/uber/scip-lsp/src/ulsp/controller/indexer/indexermock",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":go_default_library",
+        "//src/ulsp/controller/doc-sync:go_default_library",
+        "//src/ulsp/controller/user-guidance:go_default_library",
+        "//src/ulsp/entity:go_default_library",
+        "//src/ulsp/entity/ulsp-plugin:go_default_library",
+        "//src/ulsp/factory:go_default_library",
+        "//src/ulsp/gateway/ide-client:go_default_library",
+        "//src/ulsp/internal/executor:go_default_library",
+        "//src/ulsp/internal/fs:go_default_library",
+        "//src/ulsp/internal/java-utils:go_default_library",
+        "//src/ulsp/internal/logfilewriter:go_default_library",
+        "//src/ulsp/internal/serverinfofile:go_default_library",
+        "//src/ulsp/repository/session:go_default_library",
+        "@com_github_gofrs_uuid//:go_default_library",
+        "@com_github_uber_go_tally//:go_default_library",
+        "@dev_lsp_go_protocol//:go_default_library",
+        "@org_uber_go_fx//:go_default_library",
+        "@org_uber_go_mock//gomock:go_default_library",
+        "@org_uber_go_zap//:go_default_library",
+    ],
+)

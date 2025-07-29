@@ -1,0 +1,39 @@
+# Bazel
+bazel-*
+.bazelrc.user
+bin/bazelisk
+
+# SCIP index
+index.scip
+.scip/
+!**/testdata/index.scip
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.bazelproject
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Python
+venv/
+env/
+.venv/
+.env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# NodeJS
+node_modules
+dist
+*.vsix
+
+CLAUDE.md

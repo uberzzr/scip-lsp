@@ -1,0 +1,53 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_library(
+    name = "scip_sync_util",
+    srcs = glob(["*.py"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bsp_server/bazel:bazel_cmd",
+        "//bsp_server/util:utils",
+    ],
+)
+
+py_test(
+    name = "test_scip_utils",
+    srcs = glob(["test/test_scip_utils.py"]),
+    deps = [
+        ":scip_sync_util",
+    ],
+)
+
+py_test(
+    name = "test_incremental",
+    srcs = ["test/test_incremental.py"],
+    deps = [
+        ":scip_sync_util",
+    ],
+)
+
+py_test(
+    name = "test_workspace",
+    srcs = ["test/test_workspace.py"],
+    deps = [
+        ":scip_sync_util",
+    ],
+)
+
+py_test(
+    name = "test_scip_sync",
+    srcs = ["test/test_scip_sync.py"],
+    deps = [
+        ":scip_sync_util",
+    ],
+)
+
+py_binary(
+    name = "scip_sync",
+    srcs = ["scip_sync.py"],
+    main = "scip_sync.py",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":scip_sync_util",
+    ],
+)

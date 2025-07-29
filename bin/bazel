@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-$(git rev-parse --show-toplevel)}"
+BAZELISK_BIN="${WORKSPACE_ROOT}/bin/bazelisk"
+
+if [[ ! -x "$BAZELISK_BIN" ]]; then
+  echo "Downloading Bazelisk..."
+
+  case "$(uname -s)" in
+    Darwin) OS=darwin ;;
+    Linux)  OS=linux ;;
+    *) echo "Unsupported OS: $(uname -s)" >&2; exit 1 ;;
+  esac
+
+  case "$(uname -m)" in
+    x86_64|amd64) ARCH=amd64 ;;
+    arm64|aarch64) ARCH=arm64 ;;
+    *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+  esac
+
+  curl -Lso "$BAZELISK_BIN" "https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-${OS}-${ARCH}"
+  chmod +x "$BAZELISK_BIN"
+fi
+
+exec "$BAZELISK_BIN" "$@"

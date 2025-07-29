@@ -1,0 +1,11 @@
+# Classpath for compilation
+classpath={CLASSPATH}
+semanticdb_plugin={SEMANTICDB_PLUGIN}
+
+# Files to process (comma-separated)
+files_file={FILES_LIST}
+
+output={OUTPUT}
+
+# Comma-separated list of compiler options
+options=-Xlint:-options,-Xlint:-unchecked
