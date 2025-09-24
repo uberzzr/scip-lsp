@@ -238,6 +238,62 @@ func (p *partialScipRegistry) References(sourceURI uri.URI, pos protocol.Positio
 	return locations, nil
 }
 
+// Implementation implements Registry.
+func (p *partialScipRegistry) Implementation(sourceURI uri.URI, pos protocol.Position) ([]protocol.Location, error) {
+	doc, err := p.Index.LoadDocument(p.uriToRelativePath(sourceURI))
+	if err != nil {
+		p.logger.Errorf("failed to load document %s: %s", sourceURI, err)
+		return nil, err
+	}
+	if doc == nil {
+		return nil, nil
+	}
+
+	sourceOccurrence := GetOccurrenceForPosition(doc.Occurrences, pos)
+	if sourceOccurrence == nil {
+		return nil, nil
+	}
+
+	// Local symbols typically don't have implementation relationships
+	if scip.IsLocalSymbol(sourceOccurrence.Symbol) {
+		return []protocol.Location{}, nil
+	}
+
+	locations := make([]protocol.Location, 0)
+
+	// Use reverse implementors index for fast lookup
+	implementors, err := p.Index.GetImplementingSymbols(sourceOccurrence.Symbol)
+	if err != nil {
+		p.logger.Errorf("failed to get implementing symbols for %s: %s", sourceOccurrence.Symbol, err)
+		return nil, err
+	}
+
+	for _, implSym := range implementors {
+		// Parse the implementing symbol to get its descriptors
+		implementingSymbol, err := model.ParseScipSymbol(implSym)
+		if err != nil {
+			p.logger.Errorf("failed to parse implementing symbol %s: %s", implSym, err)
+			continue
+		}
+
+		// Get the definition occurrence of the implementing symbol
+		implOcc, err := p.GetSymbolDefinitionOccurrence(
+			mapper.ScipDescriptorsToModelDescriptors(implementingSymbol.Descriptors),
+			implementingSymbol.Package.Version,
+		)
+		if err != nil {
+			p.logger.Errorf("failed to get definition for implementing symbol %s: %s", implSym, err)
+			continue
+		}
+
+		if implOcc != nil && implOcc.Occurrence != nil {
+			locations = append(locations, *mapper.ScipOccurrenceToLocation(implOcc.Location, implOcc.Occurrence))
+		}
+	}
+
+	return locations, nil
+}
+
 // Hover implements Registry.
 func (p *partialScipRegistry) Hover(uri uri.URI, pos protocol.Position) (string, *model.Occurrence, error) {
 	doc, err := p.Index.LoadDocument(p.uriToRelativePath(uri))

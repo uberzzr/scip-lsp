@@ -24,6 +24,7 @@ type PartialIndex interface {
 	GetSymbolInformation(symbol string) (*model.SymbolInformation, string, error)
 	GetSymbolInformationFromDescriptors(descriptors []model.Descriptor, version string) (*model.SymbolInformation, string, error)
 	References(symbol string) (map[string][]*model.Occurrence, error)
+	GetImplementingSymbols(symbol string) ([]string, error)
 	Tidy() error
 }
 
@@ -57,19 +58,24 @@ type PartialLoadedIndex struct {
 	indexFolder      string
 	pool             *scanner.BufferPool
 	onDocumentLoaded func(*model.Document)
+
+	// ImplementorsBySymbol maps an abstract/interface symbol to the set of implementing symbols
+	ImplementorsBySymbol map[string]map[string]struct{}
+	implementorsMu       sync.RWMutex
 }
 
 // NewPartialLoadedIndex creates a new PartialLoadedIndex
 func NewPartialLoadedIndex(indexFolder string) PartialIndex {
 	return &PartialLoadedIndex{
-		PrefixTreeRoot:   NewSymbolPrefixTree(),
-		DocTreeNodes:     make(map[string]*docNodes),
-		LoadedDocuments:  make(map[string]*model.Document),
-		updatedDocs:      make(map[string]int64),
-		docToIndex:       make(map[string]string, 0),
-		indexFolder:      indexFolder,
-		pool:             scanner.NewBufferPool(1024, 12),
-		onDocumentLoaded: func(*model.Document) {},
+		PrefixTreeRoot:      NewSymbolPrefixTree(),
+		DocTreeNodes:        make(map[string]*docNodes),
+		LoadedDocuments:     make(map[string]*model.Document),
+		updatedDocs:         make(map[string]int64),
+		docToIndex:          make(map[string]string, 0),
+		indexFolder:         indexFolder,
+		pool:                scanner.NewBufferPool(1024, 12),
+		onDocumentLoaded:    func(*model.Document) {},
+		ImplementorsBySymbol: make(map[string]map[string]struct{}),
 	}
 }
 
@@ -130,6 +136,7 @@ func (p *PartialLoadedIndex) LoadIndex(indexPath string, indexReader scanner.Sci
 	localDocTreeNodes := make(map[string]*docNodes)
 	localUpdatedDocs := make(map[string]int64)
 	localDocToIndex := make(map[string]string)
+	localImplementorsBySymbol := make(map[string]map[string]struct{})
 
 	loadScanner := &scanner.IndexScannerImpl{
 		Pool: p.pool,
@@ -157,6 +164,18 @@ func (p *PartialLoadedIndex) LoadIndex(indexPath string, indexReader scanner.Sci
 			modelInfo := mapper.ScipSymbolInformationToModelSymbolInformation(info)
 			leafNode, isNew := localPrefixTree.AddSymbol(docPath, modelInfo, p.revision.Load())
 
+			// Populate reverse implementors map: relationship.Symbol is the abstract symbol,
+			// modelInfo.Symbol is the implementing symbol
+			for _, rel := range modelInfo.Relationships {
+				if rel != nil && rel.IsImplementation {
+					absSym := rel.Symbol
+					if localImplementorsBySymbol[absSym] == nil {
+						localImplementorsBySymbol[absSym] = make(map[string]struct{})
+					}
+					localImplementorsBySymbol[absSym][modelInfo.Symbol] = struct{}{}
+				}
+			}
+
 			if isNew {
 				localDocTreeNodes[docPath].nodes = append(localDocTreeNodes[docPath].nodes, leafNode)
 			}
@@ -179,6 +198,7 @@ func (p *PartialLoadedIndex) LoadIndex(indexPath string, indexReader scanner.Sci
 		p.mergeDocTreeNodes(localDocTreeNodes)
 		p.mergeUpdatedDocs(localUpdatedDocs)
 		p.mergeDocToIndex(localDocToIndex)
+		p.mergeImplementors(localImplementorsBySymbol)
 	}()
 	return loadScanner.ScanIndexReader(indexReader)
 }
@@ -277,6 +297,23 @@ func (p *PartialLoadedIndex) mergeDocToIndex(localDocToIndex map[string]string) 
 
 	for docPath, indexPath := range localDocToIndex {
 		p.docToIndex[docPath] = indexPath
+	}
+}
+
+// mergeImplementors merges a local reverse implementors map into the main index
+func (p *PartialLoadedIndex) mergeImplementors(local map[string]map[string]struct{}) {
+	if len(local) == 0 {
+		return
+	}
+	p.implementorsMu.Lock()
+	defer p.implementorsMu.Unlock()
+	for abs, impls := range local {
+		if p.ImplementorsBySymbol[abs] == nil {
+			p.ImplementorsBySymbol[abs] = make(map[string]struct{})
+		}
+		for impl := range impls {
+			p.ImplementorsBySymbol[abs][impl] = struct{}{}
+		}
 	}
 }
 
@@ -394,4 +431,20 @@ func (p *PartialLoadedIndex) Tidy() error {
 	p.updatedDocs = make(map[string]int64)
 	p.updatedDocsMu.Unlock()
 	return nil
+}
+
+// GetImplementingSymbols returns the list of implementing symbols for a given abstract/interface symbol
+func (p *PartialLoadedIndex) GetImplementingSymbols(symbol string) ([]string, error) {
+	p.implementorsMu.RLock()
+	defer p.implementorsMu.RUnlock()
+	set := p.ImplementorsBySymbol[symbol]
+	if set == nil {
+		return []string{}, nil
+	}
+	res := make([]string, 0, len(set))
+	for s := range set {
+		res = append(res, s)
+	}
+	sort.Strings(res)
+	return res, nil
 }
