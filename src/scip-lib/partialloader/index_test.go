@@ -451,9 +451,9 @@ func TestGetImplementationSymbols(t *testing.T) {
 
 func TestLoadIndexWithImplementors(t *testing.T) {
 	index := NewPartialLoadedIndex("../testdata")
-	err:=index.LoadIndexFile(filepath.Join("../testdata", "index.scip"))
+	err := index.LoadIndexFile(filepath.Join("../testdata", "index.scip"))
 	assert.NoError(t, err)
-	symbol:="scip-go gomod code.uber.internal/devexp/test_management/tracing 0f67d80e60274b77875a241c43ef980bc9ffe0d8 `code.uber.internal/devexp/test_management/tracing`/PartialIndex#"
+	symbol := "scip-go gomod code.uber.internal/devexp/test_management/tracing 0f67d80e60274b77875a241c43ef980bc9ffe0d8 `code.uber.internal/devexp/test_management/tracing`/PartialIndex#"
 	implementors, err := index.GetImplementationSymbols(symbol)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{"scip-go gomod code.uber.internal/devexp/test_management/tracing 0f67d80e60274b77875a241c43ef980bc9ffe0d8 `code.uber.internal/devexp/test_management/tracing`/index#"}, implementors)

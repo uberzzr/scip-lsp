@@ -74,7 +74,7 @@ func NewPartialLoadedIndex(indexFolder string) PartialIndex {
 		docToIndex:           make(map[string]string, 0),
 		indexFolder:          indexFolder,
 		pool:                 scanner.NewBufferPool(1024, 12),
-		onDocumentLoaded:      func(*model.Document) {},
+		onDocumentLoaded:     func(*model.Document) {},
 		ImplementorsBySymbol: make(map[string]map[string]struct{}),
 	}
 }
