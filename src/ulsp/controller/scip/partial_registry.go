@@ -343,7 +343,7 @@ func (p *partialScipRegistry) Implementation(sourceURI uri.URI, pos protocol.Pos
 	locations := make([]protocol.Location, 0)
 
 	// Fast path: use reverse implementors index
-	implementors, err := p.Index.GetImplementingSymbols(sourceOccurrence.Symbol)
+	implementors, err := p.Index.GetImplementationSymbols(sourceOccurrence.Symbol)
 	if err != nil {
 		p.logger.Errorf("failed to get implementing symbols for %s: %s", sourceOccurrence.Symbol, err)
 	} else if len(implementors) > 0 {

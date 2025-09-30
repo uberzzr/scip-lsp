@@ -1497,7 +1497,7 @@ func TestPartialScipRegistry_Implementation_FastPath(t *testing.T) {
 	}, nil)
 
 	// Fast path implementors from reverse index
-	mockIndex.EXPECT().GetImplementingSymbols(tracingUUIDKey).Return([]string{
+	mockIndex.EXPECT().GetImplementationSymbols(tracingUUIDKey).Return([]string{
 		"scip-go gomod example/pkg v1.0.0 `example/pkg`/Foo#Bar.",
 	}, nil)
 
@@ -1538,7 +1538,7 @@ func TestPartialScipRegistry_Implementation_Fallback(t *testing.T) {
 	}, nil)
 
 	// Reverse index empty, fallback to relationships
-	mockIndex.EXPECT().GetImplementingSymbols(tracingUUIDKey).Return([]string{}, nil)
+	mockIndex.EXPECT().GetImplementationSymbols(tracingUUIDKey).Return([]string{}, nil)
 	mockIndex.EXPECT().GetSymbolInformation(tracingUUIDKey).Return(&model.SymbolInformation{
 		Symbol: tracingUUIDKey,
 		Relationships: []*model.Relationship{
