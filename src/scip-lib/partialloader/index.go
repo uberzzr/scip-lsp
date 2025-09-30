@@ -24,7 +24,7 @@ type PartialIndex interface {
 	GetSymbolInformation(symbol string) (*model.SymbolInformation, string, error)
 	GetSymbolInformationFromDescriptors(descriptors []model.Descriptor, version string) (*model.SymbolInformation, string, error)
 	References(symbol string) (map[string][]*model.Occurrence, error)
-	GetImplementingSymbols(symbol string) ([]string, error)
+	GetImplementationSymbols(symbol string) ([]string, error)
 	Tidy() error
 }
 
@@ -59,22 +59,22 @@ type PartialLoadedIndex struct {
 	pool             *scanner.BufferPool
 	onDocumentLoaded func(*model.Document)
 
-	// ImplementorsBySymbol maps an abstract/interface symbol to the set of implementing symbols
-	ImplementorsBySymbol map[string]map[string]struct{}
+	// ImplementorsBySymbol maps abstract/interface symbol -> set of implementing symbols
 	implementorsMu       sync.RWMutex
+	ImplementorsBySymbol map[string]map[string]struct{}
 }
 
 // NewPartialLoadedIndex creates a new PartialLoadedIndex
 func NewPartialLoadedIndex(indexFolder string) PartialIndex {
 	return &PartialLoadedIndex{
-		PrefixTreeRoot:      NewSymbolPrefixTree(),
-		DocTreeNodes:        make(map[string]*docNodes),
-		LoadedDocuments:     make(map[string]*model.Document),
-		updatedDocs:         make(map[string]int64),
-		docToIndex:          make(map[string]string, 0),
-		indexFolder:         indexFolder,
-		pool:                scanner.NewBufferPool(1024, 12),
-		onDocumentLoaded:    func(*model.Document) {},
+		PrefixTreeRoot:       NewSymbolPrefixTree(),
+		DocTreeNodes:         make(map[string]*docNodes),
+		LoadedDocuments:      make(map[string]*model.Document),
+		updatedDocs:          make(map[string]int64),
+		docToIndex:           make(map[string]string, 0),
+		indexFolder:          indexFolder,
+		pool:                 scanner.NewBufferPool(1024, 12),
+		onDocumentLoaded:      func(*model.Document) {},
 		ImplementorsBySymbol: make(map[string]map[string]struct{}),
 	}
 }
@@ -164,15 +164,14 @@ func (p *PartialLoadedIndex) LoadIndex(indexPath string, indexReader scanner.Sci
 			modelInfo := mapper.ScipSymbolInformationToModelSymbolInformation(info)
 			leafNode, isNew := localPrefixTree.AddSymbol(docPath, modelInfo, p.revision.Load())
 
-			// Populate reverse implementors map: relationship.Symbol is the abstract symbol,
-			// modelInfo.Symbol is the implementing symbol
+			// Populate reverse implementors for quick lookup (impl -> abs)
 			for _, rel := range modelInfo.Relationships {
 				if rel != nil && rel.IsImplementation {
-					absSym := rel.Symbol
-					if localImplementorsBySymbol[absSym] == nil {
-						localImplementorsBySymbol[absSym] = make(map[string]struct{})
+					abs := rel.Symbol
+					if localImplementorsBySymbol[abs] == nil {
+						localImplementorsBySymbol[abs] = make(map[string]struct{})
 					}
-					localImplementorsBySymbol[absSym][modelInfo.Symbol] = struct{}{}
+					localImplementorsBySymbol[abs][modelInfo.Symbol] = struct{}{}
 				}
 			}
 
@@ -401,6 +400,22 @@ func (p *PartialLoadedIndex) loadDocumentFromIndexFolder(relativeDocPath string)
 	return doc, nil
 }
 
+// GetImplementationSymbols returns the list of implementing symbols for a given abstract/interface symbol
+func (p *PartialLoadedIndex) GetImplementationSymbols(symbol string) ([]string, error) {
+	p.implementorsMu.RLock()
+	defer p.implementorsMu.RUnlock()
+	set := p.ImplementorsBySymbol[symbol]
+	if set == nil {
+		return []string{}, nil
+	}
+	res := make([]string, 0, len(set))
+	for s := range set {
+		res = append(res, s)
+	}
+	sort.Strings(res)
+	return res, nil
+}
+
 // Tidy prunes nodes for documents that were updated in the current revision
 func (p *PartialLoadedIndex) Tidy() error {
 	// Acquire the modification mutex to prevent new index loads during cleanup
@@ -431,20 +446,4 @@ func (p *PartialLoadedIndex) Tidy() error {
 	p.updatedDocs = make(map[string]int64)
 	p.updatedDocsMu.Unlock()
 	return nil
-}
-
-// GetImplementingSymbols returns the list of implementing symbols for a given abstract/interface symbol
-func (p *PartialLoadedIndex) GetImplementingSymbols(symbol string) ([]string, error) {
-	p.implementorsMu.RLock()
-	defer p.implementorsMu.RUnlock()
-	set := p.ImplementorsBySymbol[symbol]
-	if set == nil {
-		return []string{}, nil
-	}
-	res := make([]string, 0, len(set))
-	for s := range set {
-		res = append(res, s)
-	}
-	sort.Strings(res)
-	return res, nil
 }
