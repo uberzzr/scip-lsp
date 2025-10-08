@@ -1475,3 +1475,41 @@ func TestPartialScipRegistry_DocumentSymbols(t *testing.T) {
 		})
 	}
 }
+
+func TestPartialScipRegistry_Implementation_FastPath(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockIndex := partialloadermock.NewMockPartialIndex(ctrl)
+	logger := zaptest.NewLogger(t).Sugar()
+
+	registry := &partialScipRegistry{
+		WorkspaceRoot: "/workspace",
+		Index:         mockIndex,
+		logger:        logger,
+	}
+
+	sourceURI := uri.File("/workspace/test.go")
+	pos := protocol.Position{Line: 1, Character: 1}
+
+	sourceOcc := &model.Occurrence{Symbol: tracingUUIDKey, Range: []int32{1, 1, 1, 2}}
+	mockIndex.EXPECT().LoadDocument("test.go").Return(&model.Document{
+		Occurrences: []*model.Occurrence{sourceOcc},
+	}, nil)
+
+	mockIndex.EXPECT().Implementations(tracingUUIDKey).Return([]string{
+		"scip-go gomod example/pkg v1.0.0 `example/pkg`/Foo#Bar.",
+	}, nil)
+
+	mockIndex.EXPECT().GetSymbolInformationFromDescriptors(gomock.Any(), gomock.Any()).Return(&model.SymbolInformation{Symbol: "impl#sym"}, "impl.go", nil)
+	mockIndex.EXPECT().LoadDocument("impl.go").Return(&model.Document{
+		Occurrences: []*model.Occurrence{
+			{Symbol: "impl#sym", SymbolRoles: int32(scipproto.SymbolRole_Definition), Range: []int32{10, 1, 10, 5}},
+		},
+	}, nil)
+
+	locs, err := registry.Implementation(sourceURI, pos)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(locs))
+	assert.Equal(t, uri.File("/workspace/impl.go"), locs[0].URI)
+	assert.Equal(t, protocol.Position{Line: 10, Character: 1}, locs[0].Range.Start)
+	assert.Equal(t, protocol.Position{Line: 10, Character: 5}, locs[0].Range.End)
+}
