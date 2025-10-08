@@ -24,7 +24,7 @@ type PartialIndex interface {
 	GetSymbolInformation(symbol string) (*model.SymbolInformation, string, error)
 	GetSymbolInformationFromDescriptors(descriptors []model.Descriptor, version string) (*model.SymbolInformation, string, error)
 	References(symbol string) (map[string][]*model.Occurrence, error)
-	GetImplementationSymbols(symbol string) ([]string, error)
+	Implementations(symbol string) ([]string, error)
 	Tidy() error
 }
 
@@ -400,8 +400,8 @@ func (p *PartialLoadedIndex) loadDocumentFromIndexFolder(relativeDocPath string)
 	return doc, nil
 }
 
-// GetImplementationSymbols returns the list of implementing symbols for a given abstract/interface symbol
-func (p *PartialLoadedIndex) GetImplementationSymbols(symbol string) ([]string, error) {
+// Implementations returns the list of implementing symbols for a given abstract/interface symbol
+func (p *PartialLoadedIndex) Implementations(symbol string) ([]string, error) {
 	p.implementorsMu.RLock()
 	defer p.implementorsMu.RUnlock()
 	set := p.ImplementorsBySymbol[symbol]

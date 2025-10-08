@@ -432,7 +432,7 @@ func TestMergeImplementors(t *testing.T) {
 	}
 }
 
-func TestGetImplementationSymbols(t *testing.T) {
+func TestImplementations(t *testing.T) {
 	idx := &PartialLoadedIndex{
 		ImplementorsBySymbol: make(map[string]map[string]struct{}),
 	}
@@ -440,11 +440,11 @@ func TestGetImplementationSymbols(t *testing.T) {
 		"impl#B": {},
 		"impl#A": {},
 	}
-	list, err := idx.GetImplementationSymbols("abs#Symbol")
+	list, err := idx.Implementations("abs#Symbol")
 	assert.NoError(t, err)
 	assert.Equal(t, []string{"impl#A", "impl#B"}, list)
 
-	empty, err := idx.GetImplementationSymbols("unknown#Symbol")
+	empty, err := idx.Implementations("unknown#Symbol")
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(empty))
 }
@@ -454,7 +454,7 @@ func TestLoadIndexWithImplementors(t *testing.T) {
 	err := index.LoadIndexFile(filepath.Join("../testdata", "index.scip"))
 	assert.NoError(t, err)
 	symbol := "scip-go gomod code.uber.internal/devexp/test_management/tracing 0f67d80e60274b77875a241c43ef980bc9ffe0d8 `code.uber.internal/devexp/test_management/tracing`/PartialIndex#"
-	implementors, err := index.GetImplementationSymbols(symbol)
+	implementors, err := index.Implementations(symbol)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{"scip-go gomod code.uber.internal/devexp/test_management/tracing 0f67d80e60274b77875a241c43ef980bc9ffe0d8 `code.uber.internal/devexp/test_management/tracing`/index#"}, implementors)
 }
