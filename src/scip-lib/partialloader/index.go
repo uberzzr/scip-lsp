@@ -412,7 +412,6 @@ func (p *PartialLoadedIndex) Implementations(symbol string) ([]string, error) {
 	for s := range set {
 		res = append(res, s)
 	}
-	sort.Strings(res)
 	return res, nil
 }
 

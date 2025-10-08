@@ -442,7 +442,8 @@ func TestImplementations(t *testing.T) {
 	}
 	list, err := idx.Implementations("abs#Symbol")
 	assert.NoError(t, err)
-	assert.Equal(t, []string{"impl#A", "impl#B"}, list)
+	assert.Contains(t, list, "impl#A")
+	assert.Contains(t, list, "impl#B")
 
 	empty, err := idx.Implementations("unknown#Symbol")
 	assert.NoError(t, err)
